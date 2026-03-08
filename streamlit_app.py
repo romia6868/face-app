@@ -27,6 +27,16 @@ import gdown
 import tensorflow as tf
 import os
 
+import streamlit as st
+import tensorflow as tf
+import gdown
+import os
+
+
+# הפונקציה שהייתה בתוך Lambda
+def l2_normalize(x):
+    return tf.math.l2_normalize(x, axis=1)
+
 
 @st.cache_resource
 def load_model():
@@ -35,16 +45,17 @@ def load_model():
     url = f"https://drive.google.com/uc?id={file_id}"
     output = "embedding_model.keras"
 
-    # הורדת המודל אם לא קיים
+    # הורדה מהדרייב אם הקובץ לא קיים
     if not os.path.exists(output):
-        with st.spinner("Downloading model from Google Drive..."):
+        with st.spinner("Downloading model..."):
             gdown.download(url, output, quiet=False)
 
-    # טעינת המודל (החלק החשוב)
+    # טעינת המודל
     model = tf.keras.models.load_model(
         output,
         compile=False,
-        safe_mode=False
+        safe_mode=False,
+        custom_objects={"l2_normalize": l2_normalize}
     )
 
     return model
