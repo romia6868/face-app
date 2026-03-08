@@ -52,11 +52,9 @@ def load_model():
 
     # טעינת המודל
     model = tf.keras.models.load_model(
-        output,
-        compile=False,
-        safe_mode=False,
-        custom_objects={"l2_normalize": l2_normalize}
-    )
+    "embedding_model_clean.keras",
+    compile=False
+)
 
     return model
 model = load_model()
