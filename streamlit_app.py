@@ -22,41 +22,19 @@ REFERENCE_DIR = "reference_images"
 # -------------------------
 # טעינת מודל
 # -------------------------
-import streamlit as st
-import gdown
-import tensorflow as tf
-import os
-
-import streamlit as st
-import tensorflow as tf
 import gdown
 import os
-
-
-# הפונקציה שהייתה בתוך Lambda
-def l2_normalize(x):
-    return tf.math.l2_normalize(x, axis=1)
-
+import tensorflow as tf
+import streamlit as st
 
 @st.cache_resource
 def load_model():
-
-    file_id = "1fMz79YX4wACoHw_iSuS13qTWBNvywZGK"
-    url = f"https://drive.google.com/uc?id={file_id}"
-    output = "embedding_model.keras"
-
-    # הורדה מהדרייב אם הקובץ לא קיים
-    if not os.path.exists(output):
-        with st.spinner("Downloading model..."):
-            gdown.download(url, output, quiet=False)
-
-    # טעינת המודל
     model = tf.keras.models.load_model(
-    "embedding_model_clean.keras",
-    compile=False
-)
-
+        "embedding_model.keras",
+        compile=False
+    )
     return model
+
 model = load_model()
 
 # -------------------------
