@@ -25,12 +25,20 @@ import os
 import tensorflow as tf
 import streamlit as st
 
+
+def l2_norm(x):
+    return tf.math.l2_normalize(x, axis=1)
 @st.cache_resource
 def load_model():
+
     model = tf.keras.models.load_model(
         "embedding_model.keras",
-        compile=False
+        compile=False,
+        custom_objects={
+            "l2_norm": l2_norm
+        }
     )
+
     return model
 
 model = load_model()
