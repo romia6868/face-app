@@ -1,5 +1,5 @@
-
 import streamlit as st
+import tensorflow as tf
 from tensorflow.keras.models import load_model
 import cv2
 import numpy as np
@@ -9,7 +9,8 @@ from PIL import Image
 model = load_model('/content/drive/MyDrive/Presence_Project/my_siamese2_model.h5')
 
 # הכנס את רשימת השמות של התלמידים
-student_names =['Maayan', 'Tomer', 'Roei', 'Zohar', 'Ilay']
+student_names = ['Maayan', 'Tomer', 'Roei', 'Zohar', 'Ilay']
+
 
 def identify_students(image, model, student_names):
     # עיבוד התמונה
