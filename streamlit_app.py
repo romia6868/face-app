@@ -32,7 +32,7 @@ def l2_norm(x):
 def load_model():
 
     model = tf.keras.models.load_model(
-        "embedding_model.keras",
+        "embedding_model (1).keras",
         compile=False,
         custom_objects={
             "l2_norm": l2_norm
