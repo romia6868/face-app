@@ -25,9 +25,9 @@ REFERENCE_DIR = "reference_images"
 @st.cache_resource
 def load_model():
 
-    file_id = "1aa-HKyBVKguxAbSwzx6oLFYb06rNAJon"
+    file_id = "1fMz79YX4wACoHw_iSuS13qTWBNvywZGK"
     url = f"https://drive.google.com/uc?id={file_id}"
-    output = "siamese_model.h5"
+    output = "embedding_model.keras"
 
     if not os.path.exists(output):
         with st.spinner("מוריד מודל..."):
@@ -35,12 +35,10 @@ def load_model():
 
     model = tf.keras.models.load_model(
         output,
-        compile=False,
-        safe_mode=False
+        compile=False
     )
 
     return model
-
 model = load_model()
 
 # -------------------------
