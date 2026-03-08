@@ -2,7 +2,6 @@ import streamlit as st
 from PIL import Image
 import numpy as np
 import tensorflow as tf
-import gdown
 import os
 
 # -------------------------
@@ -22,7 +21,6 @@ REFERENCE_DIR = "reference_images"
 # -------------------------
 # טעינת מודל
 # -------------------------
-import gdown
 import os
 import tensorflow as tf
 import streamlit as st
