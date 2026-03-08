@@ -33,7 +33,11 @@ def load_model():
         with st.spinner("מוריד מודל..."):
             gdown.download(url, output, quiet=False)
 
-    model = tf.keras.models.load_model(output, compile=False)
+    model = tf.keras.models.load_model(
+        output,
+        compile=False,
+        safe_mode=False
+    )
 
     return model
 
