@@ -22,6 +22,12 @@ REFERENCE_DIR = "reference_images"
 # -------------------------
 # טעינת מודל
 # -------------------------
+import streamlit as st
+import gdown
+import tensorflow as tf
+import os
+
+
 @st.cache_resource
 def load_model():
 
@@ -29,13 +35,16 @@ def load_model():
     url = f"https://drive.google.com/uc?id={file_id}"
     output = "embedding_model.keras"
 
+    # הורדת המודל אם לא קיים
     if not os.path.exists(output):
-        with st.spinner("מוריד מודל..."):
+        with st.spinner("Downloading model from Google Drive..."):
             gdown.download(url, output, quiet=False)
 
+    # טעינת המודל (החלק החשוב)
     model = tf.keras.models.load_model(
         output,
-        compile=False
+        compile=False,
+        safe_mode=False
     )
 
     return model
