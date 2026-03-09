@@ -21,25 +21,24 @@ REFERENCE_DIR = "reference_images"
 # -------------------------
 # טעינת מודל
 # -------------------------
-import os
 import tensorflow as tf
 import streamlit as st
 
-
 def l2_norm(x):
     return tf.math.l2_normalize(x, axis=1)
+
 @st.cache_resource
 def load_model():
 
     model = tf.keras.models.load_model(
-        "embedding_model (1).keras",
+         "embedding_model (1).keras",
         compile=False,
-        custom_objects={
-            "l2_norm": l2_norm
-        }
+        custom_objects={"l2_norm": l2_norm},
+        safe_mode=False
     )
 
     return model
+
 
 model = load_model()
 
