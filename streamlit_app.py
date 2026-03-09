@@ -26,7 +26,7 @@ st.title("📸 מערכת נוכחות - Siamese Network")
 # רשימת תלמידים
 # -------------------------
 STUDENT_ROSTER = ['Maayan', 'Tomer', 'Roei', 'Zohar', 'Ilay']
-REFERENCE_DIR = "My_Classmates"
+REFERENCE_DIR = "My_Classmates/content/drive/MyDrive/Presence_Project/My_Classmates"
 
 # -------------------------
 # שכבת נרמול
