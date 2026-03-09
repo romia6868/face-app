@@ -1,25 +1,22 @@
 import streamlit as st
 import tensorflow as tf
 
-def euclidean_distance(vectors):
-    x, y = vectors
-    return tf.sqrt(tf.reduce_sum(tf.square(x - y), axis=1, keepdims=True))
+class L2Normalize(tf.keras.layers.Layer):
+    def call(self, inputs):
+        return tf.math.l2_normalize(inputs, axis=1)
 
 @st.cache_resource
-def load_face_model():
+def load_model():
     model = tf.keras.models.load_model(
-        "my_siamese2_model.keras",
-        custom_objects={"euclidean_distance": euclidean_distance},
+        "face_encoder.keras",
+        custom_objects={"L2Normalize": L2Normalize},
         compile=False
     )
     return model
 
-model = load_face_model()
-
-st.write("Model loaded successfully")
-
-
+model = load_model()
 
 st.title("Face Recognition App")
-
 st.success("Model loaded successfully")
+
+
