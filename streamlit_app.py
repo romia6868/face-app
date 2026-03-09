@@ -1,6 +1,6 @@
 import zipfile
 
-ZIP_PATH = "My_Classmates.zip"
+ZIP_PATH = "My_Classmates_small.zip"
 EXTRACT_PATH = "My_Classmates"
 
 if not os.path.exists(EXTRACT_PATH):
