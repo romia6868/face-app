@@ -17,7 +17,7 @@ st.title("📸 מערכת נוכחות - Siamese Network")
 # -------------------------
 STUDENT_ROSTER = ['Maayan', 'Tomer', 'Roei', 'Zohar', 'Ilay']
 REFERENCE_DIR = "My_Classmates"
-st.write("Loaded students:", list(reference_embeddings.keys()))
+
 # -------------------------
 # שכבת נרמול
 # -------------------------
@@ -105,7 +105,7 @@ def load_reference_embeddings():
 
 
 reference_embeddings = load_reference_embeddings()
-
+st.write("Loaded students:", list(reference_embeddings.keys()))
 # -------------------------
 # הגדרות צד
 # -------------------------
