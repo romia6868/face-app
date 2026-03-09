@@ -1,3 +1,12 @@
+import zipfile
+
+ZIP_PATH = "My_Classmates.zip"
+EXTRACT_PATH = "My_Classmates"
+
+if not os.path.exists(EXTRACT_PATH):
+    with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
+        zip_ref.extractall(EXTRACT_PATH)
+st.write("Folders:", os.listdir("My_Classmates"))
 import streamlit as st
 import tensorflow as tf
 from tensorflow.keras.applications import MobileNetV2
