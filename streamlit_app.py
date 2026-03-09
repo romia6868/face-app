@@ -16,8 +16,7 @@ if not os.path.exists(EXTRACT_PATH):
         zip_ref.extractall(EXTRACT_PATH)
 st.write("Level 1:", os.listdir("My_Classmates"))
 st.write("Level 2:", os.listdir("My_Classmates/content"))
-st.write("Level 3:", os.listdir("My_Classmates/content/drive"))
-st.write("Folders:", os.listdir("My_Classmates"))
+st.write("Level 3:", os.listdir("My_Classmates/content/My_Classmates_small"))
 
 # -------------------------
 # הגדרות דף
