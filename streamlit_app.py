@@ -29,9 +29,7 @@ st.title("📸 מערכת נוכחות - Siamese Network")
 # רשימת תלמידים
 # -------------------------
 STUDENT_ROSTER = ['Maayan', 'Tomer', 'Roei', 'Zohar', 'Ilay']
-REFERENCE_DIR = "My_Classmates/content/drive/MyDrive/Presence_Project/My_Classmates"
-
-# -------------------------
+REFERENCE_DIR = "My_Classmates/content/My_Classmates_small"
 # שכבת נרמול
 # -------------------------
 class L2Normalize(tf.keras.layers.Layer):
