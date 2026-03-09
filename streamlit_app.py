@@ -20,7 +20,7 @@ st.write("Level 3:", os.listdir("My_Classmates/content/My_Classmates_small"))
 import os
 
 for student in os.listdir(REFERENCE_DIR):
-    student_path = os.path.join(REFERENCE_DIR, student)
+    student_path = os.path.join(REFERENCE_DIR, Tomer)
     print(student, os.listdir(student_path))
 # -------------------------
 # הגדרות דף
