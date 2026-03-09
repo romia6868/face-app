@@ -17,7 +17,7 @@ st.title("📸 מערכת נוכחות - Siamese Network")
 # -------------------------
 STUDENT_ROSTER = ['Maayan', 'Tomer', 'Roei', 'Zohar', 'Ilay']
 REFERENCE_DIR = "My_Classmates"
-
+st.write("Loaded students:", list(reference_embeddings.keys()))
 # -------------------------
 # שכבת נרמול
 # -------------------------
