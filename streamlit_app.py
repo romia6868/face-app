@@ -11,20 +11,7 @@ import zipfile
 # הגדרות דף
 # -------------------------
 st.set_page_config(page_title="מערכת נוכחות חכמה", layout="wide")
-
 st.title("📸 מערכת נוכחות חכמה")
-
-# CSS למסגרת ירוקה סביב תלמיד שזוהה
-st.markdown("""
-<style>
-.present-card {
-    border:3px solid #00c853;
-    border-radius:12px;
-    padding:10px;
-    text-align:center;
-}
-</style>
-""", unsafe_allow_html=True)
 
 # -------------------------
 # חילוץ קובץ התמונות
@@ -43,9 +30,6 @@ REFERENCE_DIR = "My_Classmates/content/My_Classmates_small"
 # -------------------------
 STUDENT_ROSTER = ['Maayan','Tomer','Roei','Zohar','Ilay']
 
-# -------------------------
-# בדיקה קצרה בלבד
-# -------------------------
 st.info(f"נמצאו {len(os.listdir(REFERENCE_DIR))} תלמידים במאגר התמונות")
 
 # -------------------------
@@ -111,7 +95,7 @@ def preprocess_image(img):
     return np.expand_dims(arr, axis=0)
 
 # -------------------------
-# יצירת embeddings
+# טעינת embeddings של כל התמונות
 # -------------------------
 @st.cache_data
 def load_reference_embeddings():
@@ -133,7 +117,6 @@ def load_reference_embeddings():
                     img_path = os.path.join(student_path,file)
 
                     img = Image.open(img_path)
-
                     img = ImageOps.exif_transpose(img)
 
                     emb = model.predict(
@@ -145,9 +128,7 @@ def load_reference_embeddings():
 
             if len(student_embeddings) > 0:
 
-                mean_embedding = np.mean(student_embeddings, axis=0)
-
-                embeddings[student] = mean_embedding
+                embeddings[student] = student_embeddings
 
     return embeddings
 
@@ -169,7 +150,9 @@ with st.sidebar:
     )
 
     st.write("רשימת תלמידים:")
-    st.write(STUDENT_ROSTER)
+    
+    for s in STUDENT_ROSTER:
+        st.write(s)
 
 # -------------------------
 # העלאת תמונות
@@ -196,7 +179,6 @@ if st.button("בדוק נוכחות"):
     for file in test_files:
 
         img = Image.open(file)
-
         img = ImageOps.exif_transpose(img)
 
         emb = model.predict(
@@ -207,14 +189,16 @@ if st.button("בדוק נוכחות"):
         best_name = None
         best_dist = 1.0
 
-        for name, ref_emb in reference_embeddings.items():
+        for name, ref_list in reference_embeddings.items():
 
-            dist = 1 - np.dot(emb, ref_emb)
+            for ref_emb in ref_list:
 
-            if dist < best_dist and dist < threshold:
+                dist = 1 - np.dot(emb, ref_emb)
 
-                best_dist = dist
-                best_name = name
+                if dist < best_dist and dist < threshold:
+
+                    best_dist = dist
+                    best_name = name
 
         if best_name and best_name not in present_students:
 
@@ -228,27 +212,37 @@ if st.button("בדוק נוכחות"):
     st.divider()
 
     # -------------------------
+    # שתי עמודות
+    # -------------------------
+    col1, col2 = st.columns(2)
+
+    # -------------------------
     # נוכחים
     # -------------------------
-    st.header(f"✅ נוכחים ({len(present_students)})")
+    with col1:
 
-    cols = st.columns(4)
+        st.header(f"✅ נוכחים ({len(present_students)})")
 
-    for i,(name,img) in enumerate(present_students.items()):
+        cols = st.columns(3)
 
-        with cols[i % 4]:
+        for i,(name,img) in enumerate(present_students.items()):
 
-            st.markdown('<div class="present-card">',unsafe_allow_html=True)
-            st.image(img,width=130)
-            st.write(f"**{name}**")
-            st.markdown('</div>',unsafe_allow_html=True)
+            with cols[i % 3]:
 
+                st.write(f"**{name}**")
+                img = img.resize((80,80))
     # -------------------------
     # חסרים
     # -------------------------
-    st.header(f"❌ חסרים ({len(missing_students)})")
+    with col2:
 
-    if missing_students:
-        st.error(", ".join(missing_students))
-    else:
-        st.success("כולם נוכחים")
+        st.header(f"❌ חסרים ({len(missing_students)})")
+
+        if missing_students:
+
+            for s in missing_students:
+                st.write(s)
+
+        else:
+
+            st.success("כולם נוכחים")
