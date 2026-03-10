@@ -118,23 +118,37 @@ def load_reference_embeddings():
 
     embeddings = {}
 
-    for name in STUDENT_ROSTER:
+    for student in os.listdir(REFERENCE_DIR):
 
-        path = os.path.join(REFERENCE_DIR, f"{name}.jpg")
+        student_path = os.path.join(REFERENCE_DIR, student)
 
-        if os.path.exists(path):
+        if os.path.isdir(student_path):
 
-            img = Image.open(path)
+            student_embeddings = []
 
-            emb = model.predict(
-                preprocess_image(img),
-                verbose=0
-            )[0]
+            for file in os.listdir(student_path):
 
-            embeddings[name] = emb
+                img_path = os.path.join(student_path, file)
+
+                # בדיקה שמדובר בקובץ תמונה
+                if file.lower().endswith((".jpg", ".jpeg", ".png")):
+
+                    img = Image.open(img_path)
+
+                    emb = model.predict(
+                        preprocess_image(img),
+                        verbose=0
+                    )[0]
+
+                    student_embeddings.append(emb)
+
+            if len(student_embeddings) > 0:
+
+                mean_embedding = np.mean(student_embeddings, axis=0)
+
+                embeddings[student] = mean_embedding
 
     return embeddings
-
 reference_embeddings = load_reference_embeddings()
 
 st.write("Loaded students:", list(reference_embeddings.keys()))
