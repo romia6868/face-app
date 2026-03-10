@@ -2,7 +2,7 @@ import streamlit as st
 import tensorflow as tf
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras import layers, models
-from PIL import Image
+from PIL import Image, ImageOps
 import numpy as np
 import os
 import zipfile
@@ -11,7 +11,20 @@ import zipfile
 # הגדרות דף
 # -------------------------
 st.set_page_config(page_title="מערכת נוכחות חכמה", layout="wide")
-st.title("📸 מערכת נוכחות - Siamese Network")
+
+st.title("📸 מערכת נוכחות חכמה")
+
+# CSS למסגרת ירוקה סביב תלמיד שזוהה
+st.markdown("""
+<style>
+.present-card {
+    border:3px solid #00c853;
+    border-radius:12px;
+    padding:10px;
+    text-align:center;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # -------------------------
 # חילוץ קובץ התמונות
@@ -23,31 +36,18 @@ if not os.path.exists(EXTRACT_PATH):
     with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
         zip_ref.extractall(EXTRACT_PATH)
 
-# -------------------------
-# תיקיית תמונות רפרנס
-# -------------------------
 REFERENCE_DIR = "My_Classmates/content/My_Classmates_small"
-
-# בדיקה שהתיקיות קיימות
-if os.path.exists(REFERENCE_DIR):
-    st.write("Reference folder:", os.listdir(REFERENCE_DIR))
-else:
-    st.error("Reference directory not found")
 
 # -------------------------
 # רשימת תלמידים
 # -------------------------
-STUDENT_ROSTER = ['Maayan', 'Tomer', 'Roei', 'Zohar', 'Ilay']
-for student in os.listdir(REFERENCE_DIR):
+STUDENT_ROSTER = ['Maayan','Tomer','Roei','Zohar','Ilay']
 
-    student_path = os.path.join(REFERENCE_DIR, student)
+# -------------------------
+# בדיקה קצרה בלבד
+# -------------------------
+st.info(f"נמצאו {len(os.listdir(REFERENCE_DIR))} תלמידים במאגר התמונות")
 
-    if os.path.isdir(student_path):
-
-        images = os.listdir(student_path)
-
-        st.write(student, "->", len(images), "images")
-        st.write(images)
 # -------------------------
 # שכבת נרמול
 # -------------------------
@@ -56,7 +56,7 @@ class L2Normalize(tf.keras.layers.Layer):
         return tf.math.l2_normalize(inputs, axis=1)
 
 # -------------------------
-# בניית מודל embedding
+# בניית מודל
 # -------------------------
 def build_pro_embedding():
 
@@ -98,7 +98,7 @@ def load_model():
 
 model = load_model()
 
-st.success("Model loaded")
+st.success("המודל נטען בהצלחה")
 
 # -------------------------
 # עיבוד תמונה
@@ -111,7 +111,7 @@ def preprocess_image(img):
     return np.expand_dims(arr, axis=0)
 
 # -------------------------
-# יצירת embeddings לתלמידים
+# יצירת embeddings
 # -------------------------
 @st.cache_data
 def load_reference_embeddings():
@@ -128,12 +128,13 @@ def load_reference_embeddings():
 
             for file in os.listdir(student_path):
 
-                img_path = os.path.join(student_path, file)
+                if file.lower().endswith((".jpg",".jpeg",".png")):
 
-                # בדיקה שמדובר בקובץ תמונה
-                if file.lower().endswith((".jpg", ".jpeg", ".png")):
+                    img_path = os.path.join(student_path,file)
 
                     img = Image.open(img_path)
+
+                    img = ImageOps.exif_transpose(img)
 
                     emb = model.predict(
                         preprocess_image(img),
@@ -149,16 +150,16 @@ def load_reference_embeddings():
                 embeddings[student] = mean_embedding
 
     return embeddings
-reference_embeddings = load_reference_embeddings()
 
-st.write("Loaded students:", list(reference_embeddings.keys()))
+
+reference_embeddings = load_reference_embeddings()
 
 # -------------------------
 # Sidebar
 # -------------------------
 with st.sidebar:
 
-    st.header("הגדרות")
+    st.header("הגדרות מערכת")
 
     threshold = st.slider(
         "Similarity Threshold",
@@ -167,7 +168,7 @@ with st.sidebar:
         0.5
     )
 
-    st.write("רשימת הכיתה")
+    st.write("רשימת תלמידים:")
     st.write(STUDENT_ROSTER)
 
 # -------------------------
@@ -182,7 +183,7 @@ test_files = st.file_uploader(
 )
 
 # -------------------------
-# זיהוי נוכחות
+# זיהוי
 # -------------------------
 if st.button("בדוק נוכחות"):
 
@@ -195,6 +196,8 @@ if st.button("בדוק נוכחות"):
     for file in test_files:
 
         img = Image.open(file)
+
+        img = ImageOps.exif_transpose(img)
 
         emb = model.predict(
             preprocess_image(img),
@@ -217,9 +220,6 @@ if st.button("בדוק נוכחות"):
 
             present_students[best_name] = img
 
-    # -------------------------
-    # תלמידים חסרים
-    # -------------------------
     missing_students = [
         s for s in STUDENT_ROSTER
         if s not in present_students
@@ -238,7 +238,10 @@ if st.button("בדוק נוכחות"):
 
         with cols[i % 4]:
 
-            st.image(img, caption=name)
+            st.markdown('<div class="present-card">',unsafe_allow_html=True)
+            st.image(img,width=130)
+            st.write(f"**{name}**")
+            st.markdown('</div>',unsafe_allow_html=True)
 
     # -------------------------
     # חסרים
