@@ -229,6 +229,7 @@ if st.button("בדוק נוכחות"):
 
             with cols[i % 3]:
 
+                st.write(f"**{name}**")
                 st.image(img, width=90)
     # -------------------------
     # חסרים
