@@ -229,8 +229,7 @@ if st.button("בדוק נוכחות"):
 
             with cols[i % 3]:
 
-                st.write(f"**{name}**")
-                img = img.resize((80,80))
+                st.image(img, width=90)
     # -------------------------
     # חסרים
     # -------------------------
