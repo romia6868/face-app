@@ -7,21 +7,6 @@ import numpy as np
 import os
 import zipfile
 
-# חילוץ קובץ התמונות
-ZIP_PATH = "My_Classmates_small.zip"
-EXTRACT_PATH = "My_Classmates"
-
-if not os.path.exists(EXTRACT_PATH):
-    with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
-        zip_ref.extractall(EXTRACT_PATH)
-st.write("Level 1:", os.listdir("My_Classmates"))
-st.write("Level 2:", os.listdir("My_Classmates/content"))
-st.write("Level 3:", os.listdir("My_Classmates/content/My_Classmates_small"))
-import os
-
-for student in os.listdir(REFERENCE_DIR):
-    student_path = os.path.join(REFERENCE_DIR, Tomer)
-    print(student, os.listdir(student_path))
 # -------------------------
 # הגדרות דף
 # -------------------------
@@ -29,10 +14,41 @@ st.set_page_config(page_title="מערכת נוכחות חכמה", layout="wide")
 st.title("📸 מערכת נוכחות - Siamese Network")
 
 # -------------------------
+# חילוץ קובץ התמונות
+# -------------------------
+ZIP_PATH = "My_Classmates_small.zip"
+EXTRACT_PATH = "My_Classmates"
+
+if not os.path.exists(EXTRACT_PATH):
+    with zipfile.ZipFile(ZIP_PATH, 'r') as zip_ref:
+        zip_ref.extractall(EXTRACT_PATH)
+
+# -------------------------
+# תיקיית תמונות רפרנס
+# -------------------------
+REFERENCE_DIR = "My_Classmates/content/My_Classmates_small"
+
+# בדיקה שהתיקיות קיימות
+if os.path.exists(REFERENCE_DIR):
+    st.write("Reference folder:", os.listdir(REFERENCE_DIR))
+else:
+    st.error("Reference directory not found")
+
+# -------------------------
 # רשימת תלמידים
 # -------------------------
 STUDENT_ROSTER = ['Maayan', 'Tomer', 'Roei', 'Zohar', 'Ilay']
-REFERENCE_DIR = "My_Classmates/content/My_Classmates_small"
+for student in os.listdir(REFERENCE_DIR):
+
+    student_path = os.path.join(REFERENCE_DIR, student)
+
+    if os.path.isdir(student_path):
+
+        images = os.listdir(student_path)
+
+        st.write(student, "->", len(images), "images")
+        st.write(images)
+# -------------------------
 # שכבת נרמול
 # -------------------------
 class L2Normalize(tf.keras.layers.Layer):
@@ -74,8 +90,10 @@ def build_pro_embedding():
 # -------------------------
 @st.cache_resource
 def load_model():
+
     model = build_pro_embedding()
     model.load_weights("face_encoder.weights.h5")
+
     return model
 
 model = load_model()
@@ -117,11 +135,12 @@ def load_reference_embeddings():
 
     return embeddings
 
-
 reference_embeddings = load_reference_embeddings()
+
 st.write("Loaded students:", list(reference_embeddings.keys()))
+
 # -------------------------
-# הגדרות צד
+# Sidebar
 # -------------------------
 with st.sidebar:
 
@@ -138,9 +157,9 @@ with st.sidebar:
     st.write(STUDENT_ROSTER)
 
 # -------------------------
-# קלט משתמש
+# העלאת תמונות
 # -------------------------
-st.subheader("העלי וקטור תמונות פנים")
+st.subheader("העלי תמונות פנים")
 
 test_files = st.file_uploader(
     "Upload faces",
@@ -149,7 +168,7 @@ test_files = st.file_uploader(
 )
 
 # -------------------------
-# זיהוי
+# זיהוי נוכחות
 # -------------------------
 if st.button("בדוק נוכחות"):
 
@@ -213,9 +232,6 @@ if st.button("בדוק נוכחות"):
     st.header(f"❌ חסרים ({len(missing_students)})")
 
     if missing_students:
-
         st.error(", ".join(missing_students))
-
     else:
-
         st.success("כולם נוכחים")
