@@ -223,14 +223,14 @@ if st.button("בדוק נוכחות"):
 
         st.header(f"✅ נוכחים ({len(present_students)})")
 
-        cols = st.columns(3)
+cols = st.columns(3)
 
-        for i,(name,img) in enumerate(present_students.items()):
+for i, (name, img) in enumerate(present_students.items()):
 
-            with cols[i % 3]:
+    with cols[i % 3]:
 
-                st.write(f"**{name}**")
-                st.image(img, width=90)
+        st.write(name)
+        st.image(img, width=90)
     # -------------------------
     # חסרים
     # -------------------------
